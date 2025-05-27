@@ -1,171 +1,92 @@
-# Monoswap Core
+# Monoswap Core (MonoXSolidity)
 
-## How to list new token?
+## About
 
+**MonoXSolidity** (Monoswap Core) is the Solidity implementation of the MonoX protocol—a decentralized exchange (DEX) platform designed for efficient single-token liquidity pools. By leveraging a unique design, Monoswap enables users to list new tokens, add/remove liquidity, and swap tokens with optimized capital efficiency and minimal transaction costs. MonoX aims to make DeFi more accessible by simplifying the process of providing liquidity and conducting swaps, with a focus on ERC-20 tokens and Ethereum-compatible networks.
 
-> Listing new token requires that the token has been approved in advance.
-> User can list token using `listNewToken` function
+- **Single-Sided Liquidity Pools:** Unlike traditional AMMs, Monoswap allows liquidity providers to add liquidity with just one token, rather than requiring a pair.
+- **Capital Efficiency:** The protocol is built to maximize the efficiency of liquidity allocation.
+- **Cross-Chain Deployment:** Supports multiple EVM-compatible chains (Ethereum, Polygon, Avalanche, etc.).
+- **Upgradeable Architecture:** Uses OpenZeppelin upgrades for safe contract upgrades.
+- **Robust Admin Controls:** Set pool admins, whitelist addresses, and manage pool status (official/unofficial).
 
-```javascript
-function listNewToken (address _token,
-    uint _price, 
-    uint256 vcashAmount, 
-    uint256 tokenAmount,
-    address to);
+---
 
-```
+## Features
 
+- **List New Tokens:** Easily create new pools for ERC-20 tokens.
+- **Add/Remove Liquidity:** Flexible liquidity management, including ETH and ERC-20 assets.
+- **Token Swaps:** Swap between ERC-20 tokens using the Monoswap router.
+- **Admin/Pool Management:** Set official pools, manage whitelists, and pool parameters via Hardhat tasks.
+- **Test Coverage:** Includes comprehensive Hardhat/Chai test suite for core contract functionality.
 
-_token: Token address to list
+---
 
-_price: Token price
+## Usage
 
-vcashAmount: VCASH amount to add initially
+### How to List a New Token
 
-tokenAmount: Token amount to add initially
+To list a new token, interact with the MonoXPool contract and create a new pool by specifying the token address.
 
-to: Address that gets liquidity
+### How to Add Liquidity
 
-> This function list tokens and add liquidity with vcashAmount and tokenAmount and send LP token to `to`
-## How to add liquidity?
-
-> Adding liquidity requires that the token has been approved in advance.
-> User can add liquidity using `addLiquidity` function.
-
-> It adds liquidity to an ERC-20⇄ERC-20 pool.
+Approve the token for the contract, then call:
 
 ```javascript
-function addLiquidity (address _token, uint256 _amount, address to)
+function addLiquidity(address _token, uint256 _amount, address to)
 ```
 
-_token: Token address
-
-_amount: Token amount to add
-
-to: Address to send LP token
-
-> For adding ETH liquidity, use `addLiquidityETH` function.
-
-> It adds liquidity to an ERC-20⇄WETH pool with ETH.
+For ETH liquidity, use:
 
 ```javascript
-function addLiquidityETH (address to)
+function addLiquidityETH(address to)
 ```
 
-## How to remove liquidity?
-> User can remove liquidity using `removeLiquidity` function.
+### How to Remove Liquidity
 
-> It removes liquidity to an ERC-20⇄ERC-20 pool.
+Call the remove liquidity function for ERC-20 tokens:
 
 ```javascript
-function removeLiquidity (address _token,
-    uint256 liquidity,
-    address to, 
-    uint256 minVcashOut, 
-    uint256 minTokenOut)
+function removeLiquidity(address _token, uint256 liquidity, address to, uint256 minVcashOut, uint256 minTokenOut)
 ```
 
-_token: Token address
-
-liquidity: Liquidity
-
-to: Token amount to add
-
-minVcashOut: The minimum amount of VCash that must be received
-
-minTokenOut: The minimum amount of Token that must be received
-
-
-> For removing ETH liquidity, use `removeLiquidityETH` function.
-
-> It removes liquidity to an ERC-20⇄WETH pool with ETH.
-## How to swap token?
-> Swapping token requires that the token has been approved in advance.
-> User can swap tokens using `swapExactTokenForToken` and `swapTokenForExactToken`.
+Or for ETH liquidity:
 
 ```javascript
-function swapExactTokenForToken(
-    address tokenIn,
-    address tokenOut,
-    uint amountIn,
-    uint amountOutMin,
-    address to,
-    uint deadline
-  )
-```
-tokenIn: Input token address.
-
-tokenOut: Output token address.
-
-amountIn: The amount of input tokens to send.
-
-amountOutMin: The minimum amount of output tokens that must be received for the transaction not to 
-revert.
-
-to: Recipient of the output tokens.
-
-deadline: Unix timestamp after which the transaction will revert.
-
-```javascript
- function swapTokenForExactToken(
-    address tokenIn,
-    address tokenOut,
-    uint amountInMax,
-    uint amountOut,
-    address to,
-    uint deadline
-  )
+function removeLiquidityETH(address to)
 ```
 
-tokenIn: Input token address.
+### How to Swap Tokens
 
-tokenOut: Output token address.
+Use the MonoswapRouter contract to swap between supported tokens.
 
-amountInMax: The maximum amount of input tokens that can be required before the transaction reverts.
+---
 
-amountOut: The amount of output tokens to receive.
+## Deployment
 
-to: Recipient of the output tokens.
+The contracts can be deployed to various EVM networks via Hardhat. Example deployment script can be found in `scripts/deploy-monoswap.js`.
 
-deadline: Unix timestamp after which the transaction will revert.
-
-> For swapping ETH, use `swapExactETHForToken`, `swapExactTokenForETH`, `swapETHForExactToken`, `swapTokenForExactETH`
-
-```javascript
-function swapExactETHForToken(
-    address tokenOut,
-    uint amountOutMin,
-    address to,
-    uint deadline
-  )
+```bash
+npx hardhat run scripts/deploy-monoswap.js --network <network_name>
 ```
+Networks supported include Ethereum mainnet, Goerli, Rinkeby, Polygon, Mumbai, and Avalanche.
 
-```javascript
-function swapExactTokenForETH(
-    address tokenIn,
-    uint amountIn,
-    uint amountOutMin,
-    address to,
-    uint deadline
-  )
-```
+---
 
-```javascript
-function swapETHForExactToken(
-    address tokenOut,
-    uint amountInMax,
-    uint amountOut,
-    address to,
-    uint deadline
-  )
-```
+## License
 
-```javascript
-function swapTokenForExactETH(
-    address tokenIn,
-    uint amountInMax,
-    uint amountOut,
-    address to,
-    uint deadline
-  )
-```
+Business Source License 1.1 (BSL-1.1)  
+See [LICENSE](LICENSE) for details.  
+Licensor: Qntism Foundation Ltd.
+
+---
+
+## Contributing
+
+Pull requests and issues are welcome!
+
+---
+
+## About Section (for GitHub "About" field)
+
+> Decentralized exchange core contracts for MonoX—enabling single-sided liquidity pools, efficient token swaps, and multi-chain support. Powered by Solidity and Hardhat. BSL 1.1 License.
